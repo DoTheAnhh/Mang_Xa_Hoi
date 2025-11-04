@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     boolean existsByName(String name);
 
+    boolean existsByUsername(String username);
+
     boolean existsByCode(String code);
 
     @Query("""

@@ -10,6 +10,8 @@ import java.util.List;
 @Setter
 public class UserRequest {
 
+    private String username;
+
     private String code;
 
     private String name;
