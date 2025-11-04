@@ -17,6 +17,7 @@ import com.example.mang_xa_hoi.repository.UserRepository;
 import com.example.mang_xa_hoi.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,10 +32,12 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
     private final SpecificationBuilder specificationBuilder;
     private final DynamicFilter dynamicFilter;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserResponse> listUser(SearchParams params) {
         Map<String, Object> filters = dynamicFilter.toFilterMap(params);
+        filters.put("deletedAt", null); // chỉ lấy record chưa xóa
         Specification<User> spec = specificationBuilder.build(filters);
         List<User> users = userRepository.findAll(spec);
 
@@ -43,6 +46,7 @@ public class UserService implements IUserService {
             response.setId(user.getId());
             response.setCode(user.getCode());
             response.setName(user.getName());
+            response.setUsername(user.getUsername());
 
             if (user.getUserRoles() != null) {
                 List<UserRoleResponse> userRoles = user.getUserRoles().stream().map(ur -> {
@@ -68,6 +72,7 @@ public class UserService implements IUserService {
         response.setId(user.getId());
         response.setCode(user.getCode());
         response.setName(user.getName());
+        response.setUsername(user.getUsername());
 
         if (user.getUserRoles() != null) {
             List<UserRoleResponse> userRoles = user.getUserRoles().stream().map(ur -> {
@@ -89,7 +94,9 @@ public class UserService implements IUserService {
 
         User user = new User();
         user.setCode(request.getCode());
+        user.setUsername(request.getCode() + "@gmail.com");
         user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode("123"));
         setUserRoles(user, request.getUserRoles());
 
         User savedUser = userRepository.save(user);
@@ -98,6 +105,7 @@ public class UserService implements IUserService {
         response.setId(savedUser.getId());
         response.setCode(savedUser.getCode());
         response.setName(savedUser.getName());
+        response.setUsername(savedUser.getUsername());
         response.setUserRoles(savedUser.getUserRoles().stream().map(ur -> {
             UserRoleResponse urRes = new UserRoleResponse();
             urRes.setId(ur.getRole().getId());
@@ -126,6 +134,7 @@ public class UserService implements IUserService {
         response.setId(savedUser.getId());
         response.setCode(savedUser.getCode());
         response.setName(savedUser.getName());
+        response.setUsername(savedUser.getUsername());
         response.setUserRoles(savedUser.getUserRoles().stream().map(ur -> {
             UserRoleResponse urRes = new UserRoleResponse();
             urRes.setId(ur.getRole().getId());
@@ -157,10 +166,19 @@ public class UserService implements IUserService {
 
         if (request.getCode() == null || request.getCode().isBlank()) {
             errors.put("code", "Không được để trống");
+        } else if (userRepository.existsByCode(request.getCode())) {
+            errors.put("code", "Code đã tồn tại");
         }
 
         if (request.getName() == null || request.getName().isBlank()) {
             errors.put("name", "Không được để trống");
+        } else if (userRepository.existsByName(request.getName())) {
+            errors.put("name", "Tên đã tồn tại");
+        }
+
+        String username = request.getCode() + "@gmail.com";
+        if (userRepository.existsByUsername(username)) {
+            errors.put("username", "Username đã tồn tại");
         }
 
         if (request.getUserRoles() == null || request.getUserRoles().isEmpty()) {

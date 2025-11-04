@@ -14,6 +14,8 @@ public class UserResponse {
 
     private String code;
 
+    private String username;
+
     private String name;
 
     private List<UserRoleResponse> userRoles;

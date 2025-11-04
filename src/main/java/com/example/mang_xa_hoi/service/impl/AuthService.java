@@ -6,6 +6,7 @@ import com.example.mang_xa_hoi.dto.auth.request.ForgotPasswordRequest;
 import com.example.mang_xa_hoi.dto.auth.request.LoginRequest;
 import com.example.mang_xa_hoi.dto.auth.request.RegisterRequest;
 import com.example.mang_xa_hoi.entity.User;
+import com.example.mang_xa_hoi.exception.ValidationException;
 import com.example.mang_xa_hoi.repository.UserRepository;
 import com.example.mang_xa_hoi.security.JwtUtil;
 import com.example.mang_xa_hoi.service.IAuthService;
@@ -42,6 +43,9 @@ public class AuthService implements IAuthService {
     @Override
     @Transactional
     public ResponseEntity<ApiResponse<?>> register(RegisterRequest request) {
+
+        validateLoginAndRegister(request.getUsername(), request.getPassword());
+
         // Kiểm tra username đã tồn tại chưa
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity
@@ -74,6 +78,9 @@ public class AuthService implements IAuthService {
 
     @Override
     public ResponseEntity<ApiResponse<?>> login(LoginRequest request) {
+
+        validateLoginAndRegister(request.getUsername(), request.getPassword());
+
         // Lấy user từ DB theo username
         User user = userRepository.findByUsername(request.getUsername()).orElse(null);
 
@@ -177,6 +184,22 @@ public class AuthService implements IAuthService {
             return "Mật khẩu mới không được trùng mật khẩu cũ";
         }
         return null;
+    }
+
+    private void validateLoginAndRegister(String username, String password) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (username == null || username.isBlank()) {
+            errors.put("username", "Không được để trống tài khoản");
+        }
+
+        if (password == null || password.isBlank()) {
+            errors.put("password", "Không được để trống mật khẩu");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
     }
 }
 
