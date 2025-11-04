@@ -4,8 +4,6 @@ import com.example.mang_xa_hoi.common.ApiResponse;
 import com.example.mang_xa_hoi.common.SearchParams;
 import com.example.mang_xa_hoi.dto.favourite.response.FavouriteResponse;
 import com.example.mang_xa_hoi.dto.share.response.ShareResponse;
-import com.example.mang_xa_hoi.dto.user.request.UserRequest;
-import com.example.mang_xa_hoi.dto.user.response.UserResponse;
 import com.example.mang_xa_hoi.dto.video.request.VideoRequest;
 import com.example.mang_xa_hoi.dto.video.response.VideoResponse;
 import com.example.mang_xa_hoi.entity.Video;
