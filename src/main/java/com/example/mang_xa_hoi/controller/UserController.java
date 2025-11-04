@@ -20,15 +20,13 @@ public class UserController {
 
     @PostMapping("list")
     public ResponseEntity<List<UserResponse>> listUser(@RequestBody SearchParams params) {
-        System.out.println("===> API /user/list called with params: " + params);
         List<UserResponse> users = userService.listUser(params);
-        System.out.println("===> Found users: " + users.size());
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable Long id) {
-        UserResponse user = userService.findUserById(id);
+    @GetMapping("get/{userId}")
+    public ResponseEntity<UserResponse> findUserById(@PathVariable Long userId) {
+        UserResponse user = userService.findUserById(userId);
         return ResponseEntity.ok(user);
     }
 

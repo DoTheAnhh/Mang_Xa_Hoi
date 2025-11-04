@@ -18,11 +18,11 @@ public class Share {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String emails;
+    private String emails;
 
-    public LocalDateTime shareDate;
+    private LocalDateTime shareDate;
 
     @ManyToOne
     @JoinColumn(name = "userId")

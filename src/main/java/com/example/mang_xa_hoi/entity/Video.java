@@ -19,17 +19,19 @@ public class Video {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String title;
+    private String title;
 
-    public String poster;
+    private String poster;
 
-    public int views;
+    private String videoUrl;
 
-    public String description;
+    private int views;
 
-    public boolean active;
+    private String description;
+
+    private boolean active;
 
     @OneToMany(mappedBy = "video", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favourite> favourites;

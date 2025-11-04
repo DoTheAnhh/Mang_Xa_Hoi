@@ -20,7 +20,7 @@ public class Favourite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public LocalDateTime likeDate;
+    private LocalDateTime likeDate;
 
     @ManyToOne
     @JoinColumn(name = "userId")
