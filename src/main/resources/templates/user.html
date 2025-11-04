@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f9fafc;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            width: 80%;
+            max-width: 900px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        #searchName {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f4f7;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        tr:hover {
+            background-color: #eef4ff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách người dùng</h1>
+
+    <div style="margin-bottom: 16px; text-align: center;">
+        <input type="text" id="searchName" placeholder="Tìm theo tên người dùng..." oninput="handleSearchInput()" />
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mã người dùng</th>
+            <th>Tên người dùng</th>
+            <th>Danh sách vai trò</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    let searchTimeout = null;
+
+    function handleSearchInput() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => loadUsers(), 300);
+    }
+
+    async function loadUsers() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Bạn không có quyền truy cập !");
+            window.location.href = "/jsp/login";
+            return;
+        }
+
+        const name = document.getElementById("searchName").value.trim();
+
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/user/list',
+                { name },
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            const users = response.data;
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+
+            users.forEach(user => {
+                const roles = user.userRoles?.map(r => r.roleName).join(', ') || '';
+                const row = `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.code || ''}</td>
+                        <td>${user.name || ''}</td>
+                        <td>${roles}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.status === 403) {
+                alert("Bạn không có quyền truy cập !");
+            } else {
+                alert("Lỗi khi tải danh sách người dùng !");
+            }
+        }
+    }
+
+    loadUsers();
+</script>
+</body>
+</html>
