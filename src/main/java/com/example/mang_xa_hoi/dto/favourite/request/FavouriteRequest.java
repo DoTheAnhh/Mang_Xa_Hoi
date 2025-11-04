@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 public class FavouriteRequest {
 
-    private LocalDateTime likeDate;
+    private LocalDateTime fromDate;
+    private LocalDateTime toDate;
 
     private Long userId;
 }
