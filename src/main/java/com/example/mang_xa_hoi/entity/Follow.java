@@ -13,22 +13,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "share")
-public class Share {
+@Table(name = "follow")
+public class Follow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public Long id;
 
-    private String emails;
+    public LocalDateTime createdAt;
 
-    private LocalDateTime shareDate;
-
+    // Người theo dõi mình (follower)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private User user;
+    @JoinColumn(name = "follower_id")
+    private User follower;
 
+    // Người mình theo dõi (followed)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "videoId")
-    private Video video;
+    @JoinColumn(name = "followed_id")
+    private User followed;
 }

@@ -22,11 +22,11 @@ public class Favourite {
 
     private LocalDateTime likeDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "videoId")
     private Video video;
 }

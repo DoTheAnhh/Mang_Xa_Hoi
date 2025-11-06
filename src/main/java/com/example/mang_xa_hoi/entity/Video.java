@@ -38,4 +38,9 @@ public class Video {
 
     @OneToMany(mappedBy = "video", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Share> shares;
+
+    //Nguời đăng
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    private User uploader;
 }

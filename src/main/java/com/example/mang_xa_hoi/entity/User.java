@@ -30,4 +30,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Share> shares;
 
+    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
+    private List<Follow> following; // người mình theo dõi
+
+    @OneToMany(mappedBy = "followed", fetch = FetchType.LAZY)
+    private List<Follow> followers; // người theo dõi mình
 }
